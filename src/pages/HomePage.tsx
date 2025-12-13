@@ -8,7 +8,7 @@ interface Pin {
   text_content: string;
   gif_url?: string
     sticker_url?: string;
-  music_link?: string;;
+  music_link?: string;
   created_at: string;
   profiles?: {
     username: string;
