@@ -191,10 +191,10 @@ function HomePage({ session }: { session: any }) {
             <div className="memories-grid">
               {pins.map((pin) => (
                 <div key={pin.id} className="memory-card">
-                  {pin.sticker && <div className="memory-sticker">{pin.sticker}</div>}
+                  {pin.sticker_url && <div className="memory-sticker">{pin.sticker_url}</div>}
                   
                   <div className="memory-content">
-                    <p>{pin.content}</p>
+                    <p>{pin.text_content}</p>
                   </div>
 
                   <div className="memory-meta">
@@ -218,7 +218,7 @@ function HomePage({ session }: { session: any }) {
                       <button
                         className="btn"
                         onClick={() => {
-                          const newContent = prompt('Edit your pin:', pin.content);
+                          const newContent = prompt('Edit your pin:', pin.text_content);
                           if (newContent) handleEdit(pin.id, newContent);
                         }}
                       >
