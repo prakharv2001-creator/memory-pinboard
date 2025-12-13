@@ -412,4 +412,19 @@ textarea {
   .sticker-grid {
     grid-template-columns: repeat(auto-fill, minmax(45px, 1fr));
   }
+
+/* Memory Card Actions */
+.memory-actions {
+  display: flex;
+  gap: 0.8rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 2px solid #ffe4f0;
+}
+
+.memory-actions .btn {
+  flex: 1;
+  padding: 0.6rem 1rem;
+  font-size: 0.9rem;
+}
 }
