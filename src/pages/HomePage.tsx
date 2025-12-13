@@ -5,10 +5,10 @@ import { supabase } from '../supabaseClient';
 interface Pin {
   id: string;
   user_id: string;
-  content: string;
-  music_link?: string;
-  gif_url?: string;
-  sticker?: string;
+  text_content: string;
+  gif_url?: string
+    sticker_url?: string;
+  music_link?: string;;
   created_at: string;
   profiles?: {
     username: string;
@@ -38,6 +38,7 @@ function HomePage({ session }: { session: any }) {
         profiles (username)
       `)
       .eq('user_id', session.user.id)
+            .eq('is_archived', false)
       .order('created_at', { ascending: false });
 
     if (error) {
@@ -54,11 +55,9 @@ function HomePage({ session }: { session: any }) {
     setLoading(true);
 
     const { error } = await supabase.from('pins').insert({
-      content,
-      music_link: musicLink || null,
+      text_content: content,      music_link: musicLink || null,
       gif_url: gifUrl || null,
-      sticker: selectedSticker || null,
-    });
+      sticker_url: selectedSticker || null,    });
 
     if (error) {
       alert('Error creating pin: ' + error.message);
