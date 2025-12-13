@@ -1,4 +1,5 @@
-/* Global Styles for Memory Pinboard */
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;600;700&family=Quicksand:wght@300;400;500;600&display=swap');/* Global Styles for Memory Pinboard */
+
 
 * {
   margin: 0;
@@ -180,7 +181,7 @@ code {
 
 /* ✨ Romantic Memory Pinboard - Soft & Dreamy Aesthetic ✨ */
 
-@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;600;700&family=Quicksand:wght@300;400;500;600&display=swap');
+
 
 /* App Container - Dreamy Background */
 .app-container {
