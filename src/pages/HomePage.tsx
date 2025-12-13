@@ -24,7 +24,7 @@ function HomePage({ session }: { session: any }) {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const stickers = ['🌸', '🌺', '🌻', '🌷', '🌹', '💐', '🌼', '🌈', '⭐', '✨', '💫', '🎀', '🎈', '🎉', '💝', '💖'];
+  const stickers = ['🌸', '💕', '😊', '💜', '🌹', '🔥', '🌙', '🦋', '⭐', '✨', '🌺', '💖', '💗', '🦄', '🎀', '🌼', '🍀', '🎈'];
 
   useEffect(() => {
     fetchUserPins();
@@ -54,8 +54,7 @@ function HomePage({ session }: { session: any }) {
     setLoading(true);
 
     const { error } = await supabase.from('pins').insert({
-      user_id: session.user.id,
-      content: content.trim(),
+      content,
       music_link: musicLink || null,
       gif_url: gifUrl || null,
       sticker: selectedSticker || null,
@@ -112,109 +111,133 @@ function HomePage({ session }: { session: any }) {
   };
 
   return (
-    <div className="app-container">
-      <nav className="navbar">
-        <h1>Memory Pinboard</h1>
-        <div className="nav-links">
-          <Link to={`/profile/${session.user.user_metadata?.username}`}>My Profile</Link>
-          <Link to="/discover">Discover</Link>
-          <button onClick={handleLogout}>Logout</button>
+    <div>
+      <header>
+        <div className="header-content">
+          <Link to="/" className="header-logo">
+            <span className="header-emoji">💕</span>
+            <h1>Memory Pinboard</h1>
+            <span className="header-emoji">💕</span>
+          </Link>
+          <nav>
+            <Link to={`/profile/${session.user.user_metadata?.username}`}>My Profile</Link>
+            <Link to="/discover">Discover</Link>
+            <button onClick={handleLogout} className="logout-btn">Logout</button>
+          </nav>
         </div>
-      </nav>
+      </header>
 
-      <div className="pin-form">
-        <h2>Create a Memory Pin</h2>
-        <form onSubmit={handleCreatePin}>
-          <textarea
-            placeholder="What's on your mind? Share a memory..."
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            required
-          />
-
-          <input
-            type="url"
-            placeholder="Music link (optional - Spotify, YouTube, etc.)"
-            value={musicLink}
-            onChange={(e) => setMusicLink(e.target.value)}
-          />
-
-          <input
-            type="url"
-            placeholder="GIF URL (optional - from Giphy, Tenor, etc.)"
-            value={gifUrl}
-            onChange={(e) => setGifUrl(e.target.value)}
-          />
-
-          <p style={{ marginBottom: '10px', color: '#666' }}>Pick a sticker (optional):</p>
-          <div className="sticker-grid">
-            {stickers.map((sticker) => (
-              <div
-                key={sticker}
-                className={`sticker ${selectedSticker === sticker ? 'selected' : ''}`}
-                onClick={() => setSelectedSticker(sticker === selectedSticker ? '' : sticker)}
-              >
-                {sticker}
-              </div>
-            ))}
-          </div>
-
-          <button type="submit" disabled={loading}>
-            {loading ? 'Creating...' : 'Create Pin'}
-          </button>
-        </form>
-      </div>
-
-      <h2 style={{ marginBottom: '20px', color: '#ff6b9d' }}>My Pins</h2>
-      <div className="pins-grid">
-        {pins.map((pin) => (
-          <div key={pin.id} className="pin-card">
-            <div className="pin-header">
-              <span className="pin-username">@{pin.profiles?.username || 'Anonymous'}</span>
-              <span className="pin-date">{new Date(pin.created_at).toLocaleDateString()}</span>
+      <div className="container">
+        <div className="create-section">
+          <h2>Create a Memory Pin</h2>
+          <form onSubmit={handleCreatePin}>
+            <div className="form-group">
+              <label>What's on your mind?</label>
+              <textarea
+                placeholder="Share a memory..."
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                required
+              />
             </div>
 
-            <p className="pin-content">{pin.content}</p>
-
-            {pin.sticker && <div className="pin-sticker">{pin.sticker}</div>}
-
-            {pin.gif_url && <img src={pin.gif_url} alt="GIF" className="pin-gif" />}
-
-            {pin.music_link && (
-              <div className="pin-music">
-                🎵 <a href={pin.music_link} target="_blank" rel="noopener noreferrer">
-                  Listen to music
-                </a>
-              </div>
-            )}
-
-            <div className="pin-actions">
-              <button
-                className="edit-btn"
-                disabled={!canEdit(pin.created_at)}
-                onClick={() => {
-                  const newContent = prompt('Edit your pin:', pin.content);
-                  if (newContent) handleEdit(pin.id, newContent);
-                }}
-              >
-                {canEdit(pin.created_at) ? 'Edit' : 'Edit (24h passed)'}
-              </button>
-              <button
-                className="delete-btn"
-                disabled={!canEdit(pin.created_at)}
-                onClick={() => handleDelete(pin.id)}
-              >
-                {canEdit(pin.created_at) ? 'Delete' : 'Delete (24h passed)'}
-              </button>
+            <div className="form-group">
+              <label>Music Link (optional)</label>
+              <input
+                type="url"
+                placeholder="Spotify, YouTube, etc."
+                value={musicLink}
+                onChange={(e) => setMusicLink(e.target.value)}
+              />
             </div>
-          </div>
-        ))}
 
-        {pins.length === 0 && (
-          <p style={{ color: '#666', textAlign: 'center', gridColumn: '1 / -1' }}>
-            No pins yet! Create your first memory above.
-          </p>
-        )}
+            <div className="form-group">
+              <label>GIF URL (optional)</label>
+              <input
+                type="url"
+                placeholder="From Giphy, Tenor, etc."
+                value={gifUrl}
+                onChange={(e) => setGifUrl(e.target.value)}
+              />
+            </div>
+
+            <div className="sticker-section">
+              <p>Pick a sticker (optional):</p>
+              <div className="sticker-grid">
+                {stickers.map((sticker) => (
+                  <div
+                    key={sticker}
+                    className={`sticker-option ${selectedSticker === sticker ? 'selected' : ''}`}
+                    onClick={() => setSelectedSticker(sticker === selectedSticker ? '' : sticker)}
+                  >
+                    {sticker}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <button type="submit" className="create-btn" disabled={loading}>
+              {loading ? 'Creating...' : 'Create Pin'}
+            </button>
+          </form>
+        </div>
+
+        <div className="memories-section">
+          <h2>My Pins</h2>
+          {pins.length === 0 ? (
+            <div className="empty-state">
+              <p>No pins yet! Create your first memory above.</p>
+            </div>
+          ) : (
+            <div className="memories-grid">
+              {pins.map((pin) => (
+                <div key={pin.id} className="memory-card">
+                  {pin.sticker && <div className="memory-sticker">{pin.sticker}</div>}
+                  
+                  <div className="memory-content">
+                    <p>{pin.content}</p>
+                  </div>
+
+                  <div className="memory-meta">
+                    <span className="memory-date">{new Date(pin.created_at).toLocaleDateString()}</span>
+                    <div className="memory-links">
+                      {pin.music_link && (
+                        <a href={pin.music_link} target="_blank" rel="noopener noreferrer" className="memory-link">
+                          🎵 Music
+                        </a>
+                      )}
+                      {pin.gif_url && (
+                        <a href={pin.gif_url} target="_blank" rel="noopener noreferrer" className="memory-link">
+                          🎬 GIF
+                        </a>
+                      )}
+                    </div>
+                  </div>
+
+                  {canEdit(pin.created_at) && (
+                    <div className="memory-actions">
+                      <button
+                        className="btn"
+                        onClick={() => {
+                          const newContent = prompt('Edit your pin:', pin.content);
+                          if (newContent) handleEdit(pin.id, newContent);
+                        }}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        className="btn"
+                        onClick={() => handleDelete(pin.id)}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
