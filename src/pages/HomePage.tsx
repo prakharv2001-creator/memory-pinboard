@@ -7,9 +7,11 @@ interface Pin {
   id: string;
   user_id: string;
   text_content: string;
+  image_urls?: string[];
   gif_url?: string;
   sticker_url?: string;
   music_link?: string;
+  background_color?: string;
   created_at: string;
   profiles?: {
     username: string;
@@ -90,7 +92,6 @@ function HomePage({ session }: { session: any }) {
           </Link>
           <nav>
             <Link to={`/profile/${session.user.user_metadata?.username}`}>My Profile</Link>
-            <Link to="/discover">Discover</Link>
             <button onClick={handleLogout} className="logout-btn">Logout</button>
           </nav>
         </div>
@@ -100,7 +101,7 @@ function HomePage({ session }: { session: any }) {
         <PinComposer onPinCreated={fetchUserPins} />
 
         <div className="memories-section">
-          <h2>My Pins</h2>
+          <h2>Our Memory Board 💕</h2>
           {pins.length === 0 ? (
             <div className="empty-state">
               <p>No pins yet! Create your first memory above.</p>
@@ -108,9 +109,27 @@ function HomePage({ session }: { session: any }) {
           ) : (
             <div className="memories-grid">
               {pins.map((pin) => (
-                <div key={pin.id} className="memory-card">
+                <div 
+                  key={pin.id} 
+                  className="memory-card"
+                  style={{ backgroundColor: pin.background_color || '#FFF9E6' }}
+                >
                   {pin.sticker_url && <div className="memory-sticker">{pin.sticker_url}</div>}
                   
+                  {/* Display Images */}
+                  {pin.image_urls && pin.image_urls.length > 0 && (
+                    <div className="memory-images">
+                      {pin.image_urls.map((url, index) => (
+                        <img 
+                          key={index} 
+                          src={url} 
+                          alt={`Memory ${index + 1}`}
+                          className="memory-image"
+                        />
+                      ))}
+                    </div>
+                  )}
+
                   <div className="memory-content">
                     <p>{pin.text_content}</p>
                   </div>
