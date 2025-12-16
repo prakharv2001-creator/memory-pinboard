@@ -7,8 +7,8 @@ interface Pin {
   id: string;
   user_id: string;
   text_content: string;
-  gif_url?: string
-    sticker_url?: string;
+  gif_url?: string;
+  sticker_url?: string;
   music_link?: string;
   created_at: string;
   profiles?: {
@@ -18,14 +18,7 @@ interface Pin {
 
 function HomePage({ session }: { session: any }) {
   const [pins, setPins] = useState<Pin[]>([]);
-  const [content, setContent] = useState('');
-  const [musicLink, setMusicLink] = useState('');
-  const [gifUrl, setGifUrl] = useState('');
-  const [selectedSticker, setSelectedSticker] = useState('');
-  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-
-  const stickers = ['🌸', '💕', '😊', '💜', '🌹', '🔥', '🌙', '🦋', '⭐', '✨', '🌺', '💖', '💗', '🦄', '🎀', '🌼', '🍀', '🎈'];
 
   useEffect(() => {
     fetchUserPins();
@@ -39,7 +32,7 @@ function HomePage({ session }: { session: any }) {
         profiles (username)
       `)
       .eq('user_id', session.user.id)
-            .eq('is_archived', false)
+      .eq('is_archived', false)
       .order('created_at', { ascending: false });
 
     if (error) {
@@ -49,34 +42,10 @@ function HomePage({ session }: { session: any }) {
     }
   };
 
-  const handleCreatePin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!content.trim()) return;
-
-    setLoading(true);
-
-    const { error } = await supabase.from('pins').insert({
-      text_content: content,      music_link: musicLink || null,
-      gif_url: gifUrl || null,
-      sticker_url: selectedSticker || null,    });
-
-    if (error) {
-      alert('Error creating pin: ' + error.message);
-    } else {
-      setContent('');
-      setMusicLink('');
-      setGifUrl('');
-      setSelectedSticker('');
-      fetchUserPins();
-    }
-
-    setLoading(false);
-  };
-
   const handleEdit = async (pinId: string, newContent: string) => {
     const { error } = await supabase
       .from('pins')
-      .update({ content: newContent })
+      .update({ text_content: newContent })
       .eq('id', pinId);
 
     if (error) {
@@ -128,59 +97,7 @@ function HomePage({ session }: { session: any }) {
       </header>
 
       <div className="container">
-        <div className="create-section">
-          <h2>Create a Memory Pin</h2>
-          <form onSubmit={handleCreatePin}>
-            <div className="form-group">
-              <label>What's on your mind?</label>
-              <textarea
-                placeholder="Share a memory..."
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label>Music Link (optional)</label>
-              <input
-                type="url"
-                placeholder="Spotify, YouTube, etc."
-                value={musicLink}
-                onChange={(e) => setMusicLink(e.target.value)}
-              />
-            </div>
-
-            <div className="form-group">
-              <label>GIF URL (optional)</label>
-              <input
-                type="url"
-                placeholder="From Giphy, Tenor, etc."
-                value={gifUrl}
-                onChange={(e) => setGifUrl(e.target.value)}
-              />
-            </div>
-
-            <div className="sticker-section">
-              <p>Pick a sticker (optional):</p>
-              <div className="sticker-grid">
-                {stickers.map((sticker) => (
-                  <div
-                    key={sticker}
-                    className={`sticker-option ${selectedSticker === sticker ? 'selected' : ''}`}
-                    onClick={() => setSelectedSticker(sticker === selectedSticker ? '' : sticker)}
-                  >
-                    {sticker}
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <button type="submit" className="create-btn" disabled={loading}>
-              {loading ? 'Creating...' : 'Create Pin'}
-            </button>
-          </form>
-        </div>
+        <PinComposer onPinCreated={fetchUserPins} />
 
         <div className="memories-section">
           <h2>My Pins</h2>
